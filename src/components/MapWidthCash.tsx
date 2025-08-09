@@ -1,6 +1,4 @@
-
-
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -62,6 +60,12 @@ const CachedTileLayer = L.TileLayer.extend({
 export default function MapWithCache({ center, zoom, tileUrlTemplate }: Props) {
     const mapRef = useRef<L.Map | null>(null);
     const layerRef = useRef<any>(null);
+    // state برای نمایش اطلاعات زوم و مرکز
+    const [mapInfo, setMapInfo] = useState({
+        zoom,
+        lat: center[0],
+        lng: center[1],
+    });
 
     useEffect(() => {
         if (!mapRef.current) {
@@ -69,13 +73,22 @@ export default function MapWithCache({ center, zoom, tileUrlTemplate }: Props) {
                 center,
                 zoom,
             });
-
             layerRef.current = new (CachedTileLayer as any)(tileUrlTemplate, {
                 maxZoom: 19,
                 tileSize: 256,
             });
 
             layerRef.current.addTo(mapRef.current);
+
+            // گوش دادن به رویداد تغییر موقعیت مرکز و زوم
+            mapRef.current.on('moveend zoomend', () => {
+                const currentCenter = mapRef.current!.getCenter();
+                setMapInfo({
+                    zoom: mapRef.current!.getZoom(),
+                    lat: currentCenter.lat,
+                    lng: currentCenter.lng,
+                });
+            });
         }
 
         return () => {
@@ -86,5 +99,33 @@ export default function MapWithCache({ center, zoom, tileUrlTemplate }: Props) {
         };
     }, [center, zoom, tileUrlTemplate]);
 
-    return <div id="map" style={{ height: '600px', width: '800px' }} />;
+    return (
+        <>
+            <section style={{ height: '600px', width: '100%', position: 'relative' }}>
+                <div
+                    id="map"
+                    style={{ height: '600px', width: '100%' }}
+                />
+                {/* Label نمایش اطلاعات */}
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 10,
+                        left: 10,
+                        backgroundColor: 'rgba(255,255,255,0.8)',
+                        padding: '6px 10px',
+                        borderRadius: 4,
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        zIndex: 1000,
+                        boxShadow: '0 0 5px rgba(0,0,0,0.3)',
+                    }}
+                >
+                    Zoom: {mapInfo.zoom.toFixed(2)} <br />
+                    Lat: {mapInfo.lat.toFixed(5)} <br />
+                    Lng: {mapInfo.lng.toFixed(5)}
+                </div>
+            </section>
+        </>
+    );
 }

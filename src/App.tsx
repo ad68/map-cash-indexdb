@@ -24,13 +24,13 @@ function App() {
     });
   }, [])
   return (
-    <>
+    <section style={{ width: "100%", height: "600px", backgroundColor: "red", margin: "auto" }}>
       <MapWithCache
         center={[35.6997, 51.337]}
         zoom={16}
         tileUrlTemplate="https://map.optimoai.ir/wmts/gm_layer/gm_grid/{z}/{x}/{y}.png"
       />
-    </>
+    </section>
   )
 }
 
