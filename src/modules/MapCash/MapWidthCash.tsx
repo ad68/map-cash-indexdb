@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import { getTile, saveTile } from '../tileCache';
+import { getTile, saveTile } from '../../tileCache';
 
 type Props = {
     center: [number, number];
@@ -60,7 +60,6 @@ const CachedTileLayer = L.TileLayer.extend({
 export default function MapWithCache({ center, zoom, tileUrlTemplate }: Props) {
     const mapRef = useRef<L.Map | null>(null);
     const layerRef = useRef<any>(null);
-    // state برای نمایش اطلاعات زوم و مرکز
     const [mapInfo, setMapInfo] = useState({
         zoom,
         lat: center[0],
@@ -111,13 +110,14 @@ export default function MapWithCache({ center, zoom, tileUrlTemplate }: Props) {
                     style={{
                         position: 'absolute',
                         top: 10,
-                        left: 10,
-                        backgroundColor: 'rgba(255,255,255,0.8)',
+                        right: 10,
+                        backgroundColor: 'rgba(2, 1, 1, 0.8)',
                         padding: '6px 10px',
                         borderRadius: 4,
                         fontSize: 14,
                         fontWeight: 'bold',
                         zIndex: 1000,
+                        color: "white",
                         boxShadow: '0 0 5px rgba(0,0,0,0.3)',
                     }}
                 >

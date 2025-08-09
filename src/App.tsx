@@ -1,8 +1,10 @@
 import './App.css'
 import './style/leaflet.css'
-import MapWithCache from './components/MapWidthCash';
+import MapCash from './modules/MapCash';
+import Home from './modules/Home';
 import { useEffect } from 'react';
 import { registerSW } from 'virtual:pwa-register';
+import { Route, Routes } from 'react-router-dom';
 function App() {
   useEffect(() => {
     const updateServiceWorker = registerSW({
@@ -13,9 +15,11 @@ function App() {
         console.error('Service Worker registration failed:', error);
       },
       onNeedRefresh() {
-
-        if (confirm('نسخه جدید آماده است. صفحه را رفرش می‌کنید؟')) {
-          updateServiceWorker();
+        const result = confirm('نسخه جدید آماده است. صفحه را رفرش می‌کنید؟');
+        if (result) {
+          updateServiceWorker()
+        } else {
+          console.log("کاربر لغو کرد");
         }
       },
       onOfflineReady() {
@@ -24,12 +28,11 @@ function App() {
     });
   }, [])
   return (
-    <section style={{ width: "100%", height: "600px", backgroundColor: "red", margin: "auto" }}>
-      <MapWithCache
-        center={[35.6997, 51.337]}
-        zoom={16}
-        tileUrlTemplate="https://map.optimoai.ir/wmts/gm_layer/gm_grid/{z}/{x}/{y}.png"
-      />
+    <section style={{ width: "100%", height: "600px", margin: "auto" }}>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/map' element={<MapCash />} />
+      </Routes>
     </section>
   )
 }
